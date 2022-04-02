@@ -10,6 +10,10 @@ app.use(cors());
 app.use(bodyparser.json());
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
+const portfoliRoute = require('./routes/portfolio-form.routes');
+
+app.use(portfoliRoute);
+
 const connectDb = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URL);

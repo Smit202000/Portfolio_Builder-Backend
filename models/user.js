@@ -1,4 +1,6 @@
-import { Schema, model } from 'mongoose';
+const  { Schema, model } = require('mongoose');
+const { portfolioModel } = require('../models/portfolio-form');
+
 const userSchema = new Schema({
   first_name: {
     type: String,
@@ -23,3 +25,13 @@ const userSchema = new Schema({
     required: true,
   },
 });
+
+userSchema.virtual('portfolios', {
+  ref: 'Portfolio',
+  localField: '_id',
+  foreignField: 'user'
+})
+
+const userModel = model('User', userSchema);
+
+module.exports = userModel;
