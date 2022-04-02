@@ -1,6 +1,4 @@
 import { Schema, model } from 'mongoose';
-
-import { Schema, model } from 'mongoose';
 const portfolioSchema = new Schema({
   contact_number: {
     type: String,
@@ -24,6 +22,9 @@ const portfolioSchema = new Schema({
     type: [String],
   },
   hobbies: {
+    type: [String],
+  },
+  strengths: {
     type: [String],
   },
   social_media_profiles: {

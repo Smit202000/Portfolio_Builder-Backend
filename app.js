@@ -1,16 +1,21 @@
-import { json } from 'body-parser';
-import express from 'express';
-import { connect } from 'mongoose';
-import { config } from 'dotenv';
-config();
+const express = require('express');
+const path = require('path');
+const mongoose = require('mongoose');
+const bodyparser = require('body-parser');
+const dotenv = require('dotenv');
+const cors = require('cors');
+dotenv.config();
 const app = express();
 app.use(cors());
-app.use(json());
+app.use(bodyparser.json());
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 const connectDb = async () => {
   try {
-    await connect(process.env.MONGODB_URL);
+    await mongoose.connect(process.env.MONGODB_URL);
+    app.listen(process.env.PORT, () => {
+      console.log('Server started on port: ', process.env.PORT);
+    });
   } catch (error) {
     console.log(error);
   }
