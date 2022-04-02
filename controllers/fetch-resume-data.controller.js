@@ -1,5 +1,3 @@
-const { userModel } = require('../models/user');
-const fs = require('fs');
 const pdf = require('pdf-parse');
 const DatauriParser = require('datauri/parser');
 const parser = new DatauriParser();
@@ -11,23 +9,20 @@ const dataUri = async (req) =>
     req.file.buffer
   );
 exports.fileUpload = async (req, res, next) => {
-  // const resumeUrl = req.file;
-  // console.log(resumeUrl, 'resmue url');
   if (req.file) {
     try {
       const file = await dataUri(req);
-      // console.log(file.content);
       const result = await uploader.upload(file.content);
 
       const image = result.url;
       return res.status(200).json({
-        messge: 'Your image has been uploded successfully to cloudinary',
+        messge: 'Your file has been uploded successfully',
         data: {
           image,
         },
       });
     } catch (err) {
-      res.status(400).json({
+      res.status(500).json({
         messge: 'someting went wrong while processing your request',
         data: {
           err,
