@@ -26,7 +26,7 @@ const signUpController = async (req, res, next) => {
 }
 
 
-const update = async (req, res,next) => {
+const updateController = async (req, res,next) => {
    
     try {
         const user = req.user
@@ -41,7 +41,7 @@ const update = async (req, res,next) => {
     }
 }
 
-const remove = async (req, res) => {
+const removeController = async (req, res) => {
     try {
         const user = req.user
         await User.deleteOne(user);
@@ -53,6 +53,6 @@ const remove = async (req, res) => {
 
 module.exports = {
     signUpController,
-    update,
-    remove,
+    updateController,
+    removeController,
 }

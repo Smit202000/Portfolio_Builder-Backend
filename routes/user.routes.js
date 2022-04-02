@@ -1,14 +1,16 @@
-const express = require("express")
+const express = require("express");
 const {
-    signUpController,update,remove
-} = require("../controllers/user.js")
+  signUpController,
+  updateController,
+  removeController,
+} = require("../controllers/user.js");
 
-router = express.Router()
+router = express.Router();
 
-router.post("/signup", signUpController)
+router.post("/signup", signUpController);
 
-router.put('/updateUser', update)
+router.put("/updateUser", updateController);
 
-router.delete('/deleteUser',remove)
+router.delete("/deleteUser", removeController);
 
-module.exports = router
+module.exports = router;
