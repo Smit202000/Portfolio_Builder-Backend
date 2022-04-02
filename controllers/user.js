@@ -26,40 +26,33 @@ const signUpController = async (req, res, next) => {
 }
 
 
-// const update = async (req, res) => {
-//     const updates = Object.keys(req.body);
-//     const allowedUpdates = ["first_name", "last_name", "user_name", "password", "email", "have_opted_in_for_portfolio"];
-//     const isValidOperation = updates.every((update) =>
-//         allowedUpdates.includes(update)
-//     );
+const update = async (req, res,next) => {
+   
+    try {
+        const user = req.user
+        const updatedUser = await User.updateOne({
+            _id: user._id
+        }, {
+            $set: req.body
+        })
+        res.json(updatedUser)
+    } catch (error) {
+        next(error)
+    }
+}
 
-//     if (!isValidOperation) {
-//         return res.status(400).send({
-//             error: "Invalid updates!",
-//         });
-//     }
-
-//     try {
-//         updates.forEach((update) => (req.userModel[update] = req.body[update]));
-//         await req.userModel.save();
-//         res.send(req.userModel);
-//     } catch (e) {
-//         res.status(400).send(e);
-//     }
-// };
-
-// const remove = async (req, res) => {
-//     try {
-//         await req.userModel.remove();
-//         res.send(req.userModel);
-//     } catch (e) {
-//         res.status(500).send();
-//     }
-// };
+const remove = async (req, res) => {
+    try {
+        const user = req.user
+        await User.deleteOne(user);
+        res.send("done");
+    } catch (error) {
+        next(error)
+    }
+};
 
 module.exports = {
-    loginController,
     signUpController,
-    refreshAccessToken,
-    logoutController,
+    update,
+    remove,
 }

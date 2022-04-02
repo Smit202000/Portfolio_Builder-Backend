@@ -36,29 +36,7 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-//This is instance method which will check the hashed password
-userSchema.methods.checkPassword = async function (password) {
-    
-  let isMatched = await bcrypt.compare(password, this.password)
-  
-  return isMatched
-}
 
-//This Function will use to create Refresh/ Access Token based on the argument
-userSchema.methods.getToken = function ({exp, secret}) {
-  
-  let token;
-  if (exp) {
-      token = jwt.sign({ id: this._id }, secret, {
-          // This time is in second
-          expiresIn: exp
-      })
-  } else {
-      token = jwt.sign({ id: this._id },secret)
-  }
-
-  return token
-}
 
 //This method will execute before the user is saved
 userSchema.pre("save", async function (next) {
