@@ -4,10 +4,10 @@ const MyErrors = require("../utils/customError.js")
 const User = require("../models/user.js")
 
 const loginController = async (req, res, next) => {
-    let { user_name, password } = req.body
-    if (user_name && password) {
+    let { email, password } = req.body
+    if (email && password) {
         //Finding User
-        let user = await User.findOne({ user_name })
+        let user = await User.findOne({ email })
         if (!user) {
             return next(MyErrors.notFound({ message: "User Not Found" }))
         }
