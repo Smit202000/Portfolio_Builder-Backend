@@ -1,13 +1,14 @@
-const express = require("express");
-// const auth = require('../middleware/auth')
-// const bcrypt = require("bcryptjs");
-const router = new express.Router();
-const { register, update, remove } = require("../controllers/user.controller");
+const express = require("express")
+const {
+    signUpController,
+} = require("../controllers/user.js")
 
-router.post("/users/register", register);
+router = express.Router()
 
-router.patch("/users/me", update);
+router.post("/signup", signUpController)
 
-router.delete("/users/me", remove);
+// router.put('/updateUser', update)
 
-module.exports = router;
+// router.delete('/deleteUser',remove)
+
+module.exports = router
