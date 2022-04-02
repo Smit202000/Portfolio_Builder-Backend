@@ -36,6 +36,12 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+userSchema.virtual('portfolios', {
+  ref: 'Portfolio',
+  localField: '_id',
+  foreignField: 'user'
+})
+
 //This is instance method which will check the hashed password
 userSchema.methods.checkPassword = async function (password) {
     
@@ -69,4 +75,5 @@ userSchema.pre("save", async function (next) {
   }
   next()
 })
+
 module.exports = new mongoose.model("User", userSchema)

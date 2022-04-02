@@ -18,6 +18,11 @@ app.use(errorHandler)
 // const u = User({first_name:"a", last_name:"b", email:"a@a.a", password:"1", user_name:"a"})
 // u.save().then(_=>console.log(_)).catch(e=>console.log(e.message))
 // =======
+
+const portfoliRoute = require('./routes/portfolio-form.routes');
+
+app.use(portfoliRoute);
+
 const connectDb = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URL);
