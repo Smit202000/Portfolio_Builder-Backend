@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+const { Schema, model } = require('mongoose');
 const portfolioSchema = new Schema({
   contact_number: {
     type: String,
@@ -30,5 +30,10 @@ const portfolioSchema = new Schema({
   social_media_profiles: {
     type: [String],
   },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
 });
-export const portfolioModel = model('Portfolio', portfolioSchema);
+exports.portfolioModel = model('Portfolio', portfolioSchema);
