@@ -13,18 +13,20 @@ const auth = async (req, res, next) => {
             let payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
 
             let user = await User.findById(payload.id, "-password -__v")
-            
+
             if (!user) {
-                return next(MyErrors.notFound({message: "User Not Found"}))
+                return next(MyErrors.notFound({ message: "User Not Found" }))
             }
 
-            if(user.blackList.findIndex((token)) > -1 ){
+            if (user.blackList.findIndex((ele) => {
+                return ele === token
+            }) > -1) {
                 return next(MyErrors.unAuthorized({ message: "Invalid Access Token" }))
             }
 
             req.user = user
             next()
-            
+
         } catch (error) {
             next(error)
         }
