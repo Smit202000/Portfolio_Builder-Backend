@@ -10,9 +10,9 @@ const dataUri = async (req) =>
     path.extname(req.file.originalname).toString(),
     req.file.buffer
   );
-exports.uploadResume = async (req, res, next) => {
-  const resumeUrl = req.file;
-  console.log(resumeUrl, 'resmue url');
+exports.fileUpload = async (req, res, next) => {
+  // const resumeUrl = req.file;
+  // console.log(resumeUrl, 'resmue url');
   if (req.file) {
     try {
       const file = await dataUri(req);
