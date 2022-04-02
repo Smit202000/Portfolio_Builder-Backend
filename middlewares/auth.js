@@ -17,8 +17,9 @@ const auth = async (req, res, next) => {
             if (!user) {
                 return next(MyErrors.notFound({message: "User Not Found"}))
             }
-
-            if(user.blackList.findIndex((token)) > -1 ){
+            if(user.blackList.findIndex((ele)=>{
+                return ele === token
+            }) > -1 ){
                 return next(MyErrors.unAuthorized({ message: "Invalid Access Token" }))
             }
 
@@ -38,4 +39,4 @@ const auth = async (req, res, next) => {
 }
 
 
-module.exports = { auth }
+module.exports = auth

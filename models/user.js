@@ -36,6 +36,19 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+userSchema.virtual('portfolios', {
+  ref: 'Portfolio',
+  localField: '_id',
+  foreignField: 'user'
+})
+
+//This is instance method which will check the hashed password
+userSchema.methods.checkPassword = async function (password) {
+    
+  let isMatched = await bcrypt.compare(password, this.password)
+  
+  return isMatched
+}
 
 
 //This method will execute before the user is saved
@@ -47,4 +60,5 @@ userSchema.pre("save", async function (next) {
   }
   next()
 })
+
 module.exports = new mongoose.model("User", userSchema)
