@@ -17,7 +17,7 @@ router.post('', auth, createPortfolio);
 
 router.get('', auth, getPortfolio);
 
-router.get('/:username', auth, getPortfolioByUsername);
+router.get('/:username', getPortfolioByUsername);
 
 router.patch('', auth, updatePortfolio);
 
