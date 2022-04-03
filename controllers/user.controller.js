@@ -134,6 +134,22 @@ const signUpController = async (req, res, next) => {
 };
 
 const updateUserController = async (req, res, next) => {
+  const userDataByEmail = await User.findOne({ email: req.body.email });
+  const userDataByUserName = await User.findOne({
+    userName: req.body.userName,
+  });
+  if (userDataByEmail) {
+    return res.status(500).json({
+      success: false,
+      message: 'Email id already exists.',
+    });
+  }
+  if (userDataByUserName) {
+    return res.status(500).json({
+      success: false,
+      message: 'Username already exists.',
+    });
+  }
   try {
     const user = req.user;
     const updatedUser = await User.updateOne(
@@ -144,7 +160,11 @@ const updateUserController = async (req, res, next) => {
         $set: req.body,
       }
     );
-    res.status(200).json({ success, data: updatedUser });
+    res.status(200).json({
+      success,
+      data: updatedUser,
+      message: 'User updated successfully.',
+    });
   } catch (error) {
     next(error);
   }
