@@ -99,23 +99,23 @@ const getPortfolioByUsername = async (req, res) => {
         success: false,
       });
     }
-    const portfolioData = await portfolioModel.find({ user: userData._id });
-    // console.log(portfolioData);
-    if (portfolioData) {
-      res.status(200).json({
-        message: 'Portfolio fetched successfully!',
-        success: true,
-        data: {
-          portfolioData,
-          userData,
-        },
-      });
-    } else {
-      res.status(404).json({
+    const portfolioData = await portfolioModel.findOne({ user: userData._id });
+    if (!portfolioData) {
+      return res.status(404).json({
         message: 'Could not find portfolio for given username!',
         success: false,
       });
     }
+    // console.log(portfolioData);
+
+    res.status(200).json({
+      message: 'Portfolio fetched successfully!',
+      success: true,
+      data: {
+        portfolioData,
+        userData,
+      },
+    });
   } catch (err) {
     res.status(500).json({
       error: err,
