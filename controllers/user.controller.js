@@ -102,25 +102,29 @@ const refreshAccessToken = async (req, res, next) => {
 };
 
 const signUpController = async (req, res, next) => {
-  const userData = await User.findOne();
-  if (req.body.email === userData.email) {
+  const userDataByEmail = await User.findOne({ email: req.body.email });
+  const userDataByUserName = await User.findOne({
+    userName: req.body.userName,
+  });
+  if (userDataByEmail) {
     return res.status(500).json({
       success: false,
       message: 'Email id already exists.',
     });
   }
-  if (req.body.userName === userData.userName) {
+  if (userDataByUserName) {
     return res.status(500).json({
       success: false,
       message: 'Username already exists.',
     });
   }
+
   try {
     const user = new User(req.body);
     const result = await user.save();
     // const { username, email, _id } = user;
 
-    res.status(200).json({
+    return res.status(200).json({
       success,
       data: result,
     });
