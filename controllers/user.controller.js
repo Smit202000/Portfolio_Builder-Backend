@@ -3,6 +3,7 @@ require('dotenv').config();
 const MyErrors = require('../utils/customError.js');
 const User = require('../models/user.js');
 let success = true;
+
 const loginController = async (req, res, next) => {
   let { email, password } = req.body;
   if (email && password) {
@@ -135,6 +136,48 @@ const updateUserController = async (req, res, next) => {
   }
 };
 
+const updatePasswordController = async (req, res) => {
+  try {
+
+    const user = req.user;
+    const {
+      oldPassword,
+      password
+    } = req.body;
+
+    let updatedPassword = {
+      password: password,
+    };
+
+    const updatePassword = await User.findOneAndUpdate({
+      _id: user._id,
+    }, {
+      $set: updatedPassword
+    }, {
+      new: true,
+      useFindAndModify: false
+    });
+    // validate old password
+    bcrypt.compare(oldPassword, updatePassword.password, function (err, match) {
+      if (!match || err)
+        return res.status(400).send('Please enter correct old password');
+    });
+    //hash password and save user
+    bcrypt.genSalt(12, function (err, salt) {
+      bcrypt.hash(updatePassword.password, salt, (err, hash) => {
+        updatePassword.password = hash;
+        updatePassword.save();
+        return res.json({
+          updatePassword
+        });
+      });
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send('Something went wrong. Try again');
+  }
+};
+
 const deleteUserController = async (req, res) => {
   try {
     const user = req.user;
@@ -152,4 +195,5 @@ module.exports = {
   signUpController,
   updateUserController,
   deleteUserController,
+  updatePasswordController
 };
