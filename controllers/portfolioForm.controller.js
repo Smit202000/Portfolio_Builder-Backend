@@ -5,6 +5,18 @@ const userModel = require('../models/user');
 let success = true;
 
 const createPortfolio = async (req, res) => {
+  // if(req.user._id.toString()===)
+  // console.log(req.user._id, 'rui');
+  const existingPortfolio = await portfolioModel.findOne({
+    user: req.user._id,
+  });
+  // console.log(existingPortfolio, 'exp');
+  if (existingPortfolio) {
+    return res.status(422).json({
+      success: false,
+      message: 'Portfolio already exists for this user',
+    });
+  }
   const portfolio = new portfolioModel({
     ...req.body,
     user: req.user._id,
@@ -87,7 +99,7 @@ const getPortfolioByUsername = async (req, res) => {
         success: false,
       });
     }
-    const portfolioData = await portfolioModel.findOne({ user: userData._id });
+    const portfolioData = await portfolioModel.find({ user: userData._id });
     // console.log(portfolioData);
     if (portfolioData) {
       res.status(200).json({

@@ -29,7 +29,7 @@ app.use(helmet());
 cloudinaryConfig();
 app.use(fetchResumeDataRouter);
 app.use('/user', userRouter);
-app.use('/portfolio', portfolioRouter);
+app.use(portfolioRouter);
 app.use(errorHandler);
 const connectDb = async () => {
   try {
