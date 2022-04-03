@@ -1,28 +1,31 @@
-const express = require("express")
+const express = require('express');
+const auth = require('../middlewares/auth');
 
-
+const userValidation = require('../validator/userValidator');
 const {
   loginController,
   logoutController,
   refreshAccessToken,
   signUpController,
-  updateController,
-  removeController,
-} = require("../controllers/user.js");
+  updateUserController,
+  deleteUserController,
+  updatePasswordController
+} = require('../controllers/user.controller');
+const router = require('./fetchResumeData.routes');
 
-router = express.Router();
-
-router.post("/signup", signUpController);
+router.post('/signup', userValidation, signUpController);
 
 router.post("/login", loginController)
 
-router.post("/logout", logoutController)
+router.post('/logout', logoutController);
 
-router.post("/refresh-access", refreshAccessToken)
+router.post('/refresh-access', refreshAccessToken);
 
 // router.put('/updateUser', update)
-router.put("/updateUser", updateController);
+router.put('/updateUser', auth, updateUserController);
 
-router.delete("/deleteUser", removeController);
+router.put('/updatePassword', auth, updatePasswordController)
+
+router.delete('/deleteUser', auth, deleteUserController);
 
 module.exports = router;

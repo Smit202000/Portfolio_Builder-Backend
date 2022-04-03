@@ -1,16 +1,16 @@
-const { model, Schema} = require('mongoose')
+const { model, Schema } = require('mongoose');
 
 const portfolioSchema = new Schema({
   about: {
-    type: String
-  },
-  contact_number: {
     type: String,
   },
-  education_details: {
+  contactNumber: {
+    type: String,
+  },
+  educationDetails: {
     type: [Object],
   },
-  experience_details: {
+  experienceDetails: {
     type: [Object],
   },
   skills: {
@@ -31,21 +31,22 @@ const portfolioSchema = new Schema({
   // strengths: {
   //   type: [String],
   // },
-  social_media_profiles: {
+  socialMediaProfiles: {
     type: [Object],
   },
   address: {
-    type: Object
+    type: Object,
   },
   // testimonials: {
   //   type: String
   // },
   user: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
-  }
+    ref: 'User', //model name User from user model lastline
+    required: true,
+  },
 });
 
 const portfolioModel = model('Portfolio', portfolioSchema);
 
-module.exports = portfolioModel
+module.exports = portfolioModel;

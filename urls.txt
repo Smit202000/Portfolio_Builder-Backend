@@ -1,0 +1,17 @@
+
+Upload Image: https://portfoliobuilder-by-aavishkar.herokuapp.com/upload-image
+Sign Up: https://portfoliobuilder-by-aavishkar.herokuapp.com/user/signup
+body: {
+    "firstName": "abc",
+    "lastName": "def",
+    "email": "abc@gmail.com",
+    "password": "abc@123",
+    "userName": "abc_123",
+    "image": "http://res.cloudinary.com/ddqh3ymyo/image/upload/v1648944117/uziszzp5gevzxniilffz.png"
+}
+
+login: https://portfoliobuilder-by-aavishkar.herokuapp.com/user/login
+body:{
+    "email": "abc@gmail.com",
+    "password": "abc@123"
+}
