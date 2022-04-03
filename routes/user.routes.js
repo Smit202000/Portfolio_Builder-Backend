@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const express = require('express');
 const auth = require('../middlewares/auth');
 
@@ -28,17 +27,3 @@ router.put('/updateUser', auth, updateUserController);
 router.delete('/deleteUser', auth, deleteUserController);
 
 module.exports = router;
-=======
-const express = require("express")
-const { loginController, logoutController, refreshAccessToken } = require("../controllers/user.js")
-
-router = express.Router()
-
-router.post("/login", loginController)
-
-router.post("/logout", logoutController)
-
-
-router.post("/refresh-access", refreshAccessToken)
-module.exports = router
->>>>>>> origin/development
