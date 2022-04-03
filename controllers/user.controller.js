@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const MyErrors = require('../utils/customError.js');
 const User = require('../models/user.js');
+const mail = require("../utils/mail")
 let success = true;
 const loginController = async (req, res, next) => {
   let { email, password } = req.body;
@@ -179,6 +180,43 @@ const deleteUserController = async (req, res) => {
     next(error);
   }
 };
+const resetPasswordPOST = async (req, res, next) => {
+  const { email } = req.body
+  try {
+    const u = await User.findOne({ email })
+    if (!u) {
+      next(MyErrors.notFound({
+        message: "User not found"
+      }))
+    }
+    const token = jwt.sign({ id: u._id }, process.env.RESET_TOKEN_SECRET, {
+      // This time is in second
+      expiresIn: 60 * 60,
+    })
+
+    //creating the reset link
+    const link = "http://" + req.get('host') + "/user/password/reset/" + token;
+    await mail(email, link)
+    res.status(201).json({ message: "Password reset link is sent to your email", token })
+  } catch (error) {
+    return next(error)
+  }
+}
+
+const resetPasswordSet = async (req, res, next) => {
+  const token = req.params.token
+  const { password } = req.body
+  try {
+    const userId = jwt.verify(token, process.env.RESET_TOKEN_SECRET)
+    const user = await User.findOne({ _id: userId.id })
+    user.password = password
+    await user.save()
+
+    res.json({ message: "Password reseted" })
+  } catch (error) {
+    return next(error)
+  }
+}
 
 module.exports = {
   loginController,
@@ -187,4 +225,6 @@ module.exports = {
   signUpController,
   updateUserController,
   deleteUserController,
+  resetPasswordPOST,
+  resetPasswordSet
 };
