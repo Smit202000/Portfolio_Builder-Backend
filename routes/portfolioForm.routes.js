@@ -13,14 +13,14 @@ const auth = require('../middlewares/auth');
 
 const router = new express.Router();
 
-router.post('', auth, createPortfolio);
+router.post('/portfolio', auth, createPortfolio);
 
-router.get('', auth, getPortfolio);
+router.get('/portfolio', auth, getPortfolio);
 
-router.get('/:username', getPortfolioByUsername);
+router.get('/portfolio/:username', getPortfolioByUsername);
 
-router.patch('', auth, updatePortfolio);
+router.patch('/portfolio', auth, updatePortfolio);
 
-router.delete('', auth, deletePortfolio);
+router.delete('/portfolio', auth, deletePortfolio);
 
 module.exports = router;
