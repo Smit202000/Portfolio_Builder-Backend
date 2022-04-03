@@ -39,7 +39,7 @@ const portfolioSchema = new Schema({
     type: Object,
   },
   template: {
-    type: string,
+    type: String,
     required: true,
   },
   // testimonials: {
