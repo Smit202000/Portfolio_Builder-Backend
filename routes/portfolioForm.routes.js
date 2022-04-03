@@ -5,6 +5,7 @@ const {
   createPortfolio,
   updatePortfolio,
   deletePortfolio,
+  getPortfolio,
   getPortfolioByUsername,
 } = require('../controllers/portfolioForm.controller');
 
@@ -14,7 +15,9 @@ const router = new express.Router();
 
 router.post('', auth, createPortfolio);
 
-router.get('', auth, getPortfolioByUsername);
+router.get('', auth, getPortfolio);
+
+router.get('/:username', auth, getPortfolioByUsername);
 
 router.patch('', auth, updatePortfolio);
 

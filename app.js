@@ -20,6 +20,7 @@ app.use(
     origin: [
       'https://portfoliobuilder-prod.netlify.app',
       'https://portfolio-builder-dev.netlify.app',
+      'http://localhost:3000',
     ],
   })
 );
