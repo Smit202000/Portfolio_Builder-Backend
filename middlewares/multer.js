@@ -14,7 +14,7 @@ const imageFilter = (req, file, cb) => {
     file.mimetype === 'image/jpg' ||
     file.mimetype === 'image/jpeg'
   ) {
-    console.log('imagetrue');
+    // console.log('imagetrue');
     cb(null, true);
   } else {
     cb(

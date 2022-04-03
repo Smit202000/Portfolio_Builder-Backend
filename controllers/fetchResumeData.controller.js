@@ -1,13 +1,8 @@
 const pdf = require('pdf-parse');
-const DatauriParser = require('datauri/parser');
-const parser = new DatauriParser();
-const path = require('path');
+
 const { uploader } = require('cloudinary');
-const dataUri = async (req) =>
-  await parser.format(
-    path.extname(req.file.originalname).toString(),
-    req.file.buffer
-  );
+const { dataUri } = require('../utils/dataUri');
+let success = true;
 exports.fileUpload = async (req, res, next) => {
   if (req.file) {
     try {
@@ -16,19 +11,26 @@ exports.fileUpload = async (req, res, next) => {
 
       const image = result.url;
       return res.status(200).json({
-        messge: 'Your file has been uploded successfully',
+        message: 'Your file has been uploded successfully',
+        success,
         data: {
           image,
         },
       });
     } catch (err) {
       res.status(500).json({
-        messge: 'someting went wrong while processing your request',
+        message: 'Someting went wrong while processing your request',
+        success: false,
         data: {
           err,
         },
       });
     }
+  } else {
+    return res.status(500).json({
+      success: false,
+      message: "File didn't get uploaded.",
+    });
   }
 };
 
