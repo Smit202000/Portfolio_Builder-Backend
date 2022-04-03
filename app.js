@@ -1,19 +1,40 @@
 const express = require('express');
-const path = require('path');
 const mongoose = require('mongoose');
 const bodyparser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const userRouter = require("./routes/user.routes");
+var compression = require('compression');
+
+const fetchResumeDataRouter = require('./routes/fetchResumeData.routes');
+const { cloudinaryConfig } = require('./config/cloudinaryConfig');
+const userRouter = require('./routes/user.routes');
+const portfolioRouter = require('./routes/portfolioForm.routes');
+const contactFormRouter = require('./routes/contactForm.routes');
+
 const { errorHandler } = require('./middlewares/errorHandler');
+const { default: helmet } = require('helmet');
 dotenv.config();
 const app = express();
-app.use(cors());
 app.use(bodyparser.json());
-app.use('/images', express.static(path.join(__dirname, 'images')));
-app.use("/user", userRouter)
-app.use(errorHandler)
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(
+  cors({
+    origin: [
+      'https://portfoliobuilder-prod.netlify.app',
+      'https://portfolio-builder-dev.netlify.app',
+      'http://localhost:3000',
+    ],
+  })
+);
+app.use(compression());
+app.use(helmet());
+cloudinaryConfig();
+app.use(fetchResumeDataRouter);
+app.use('/user', userRouter);
+app.use(portfolioRouter);
+app.use(contactFormRouter);
 
+app.use(errorHandler);
 const connectDb = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URL);
@@ -21,7 +42,7 @@ const connectDb = async () => {
       console.log('Server started on port: ', process.env.PORT);
     });
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 connectDb();
