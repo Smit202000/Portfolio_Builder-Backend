@@ -9,6 +9,8 @@ const fetchResumeDataRouter = require('./routes/fetchResumeData.routes');
 const { cloudinaryConfig } = require('./config/cloudinaryConfig');
 const userRouter = require('./routes/user.routes');
 const portfolioRouter = require('./routes/portfolioForm.routes');
+const contactFormRouter = require('./routes/contactForm.routes');
+
 const { errorHandler } = require('./middlewares/errorHandler');
 const { default: helmet } = require('helmet');
 dotenv.config();
@@ -30,6 +32,8 @@ cloudinaryConfig();
 app.use(fetchResumeDataRouter);
 app.use('/user', userRouter);
 app.use(portfolioRouter);
+app.use(contactFormRouter);
+
 app.use(errorHandler);
 const connectDb = async () => {
   try {

@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const MyErrors = require('../utils/customError.js');
 const User = require('../models/user.js');
-const mail = require("../utils/mail")
+const mail = require('../utils/mail');
 let success = true;
 const loginController = async (req, res, next) => {
   let { email, password } = req.body;
@@ -38,6 +38,7 @@ const loginController = async (req, res, next) => {
       data: {
         accessToken: accessToken,
         refreshToken: refreshToken,
+        user,
       },
     });
   } else {
@@ -135,32 +136,29 @@ const signUpController = async (req, res, next) => {
 };
 
 const updateUserController = async (req, res, next) => {
-  const userDataByEmail = await User.findOne({ email: req.body.email });
-  const userDataByUserName = await User.findOne({
-    userName: req.body.userName,
-  });
-  if (userDataByEmail) {
-    return res.status(500).json({
-      success: false,
-      message: 'Email id already exists.',
+  if (req.body.email || req.body.userName) {
+    const userDataByEmail = await User.findOne({ email: req.body.email });
+    const userDataByUserName = await User.findOne({
+      userName: req.body.userName,
     });
+    if (userDataByEmail) {
+      return res
+        .status(422)
+        .json({ success: false, message: 'Email id already exists.' });
+    }
+    if (userDataByUserName) {
+      return res
+        .status(422)
+        .json({ success: false, message: 'Username already exists.' });
+    }
   }
-  if (userDataByUserName) {
-    return res.status(500).json({
-      success: false,
-      message: 'Username already exists.',
-    });
-  }
+
   try {
     const user = req.user;
-    const updatedUser = await User.updateOne(
-      {
-        _id: user._id,
-      },
-      {
-        $set: req.body,
-      }
-    );
+    for (key in req.body) {
+      user[key] = req.body[key];
+    }
+    const updatedUser = await user.save();
     res.status(200).json({
       success,
       data: updatedUser,
@@ -181,42 +179,52 @@ const deleteUserController = async (req, res) => {
   }
 };
 const resetPasswordPOST = async (req, res, next) => {
-  const { email } = req.body
+  const { email } = req.body;
   try {
-    const u = await User.findOne({ email })
+    const u = await User.findOne({ email });
     if (!u) {
-      next(MyErrors.notFound({
-        message: "User not found"
-      }))
+      next(
+        MyErrors.notFound({
+          message: 'User not found',
+        })
+      );
     }
     const token = jwt.sign({ id: u._id }, process.env.RESET_TOKEN_SECRET, {
       // This time is in second
       expiresIn: 60 * 60,
-    })
+    });
 
     //creating the reset link
-    const link = "http://" + req.get('host') + "/user/password/reset/" + token;
-    await mail(email, link)
-    res.status(201).json({ message: "Password reset link is sent to your email", token })
+    const link = 'http://' + req.get('host') + '/user/password/reset/' + token;
+    await mail(
+      email,
+      link,
+      'Forgot Password',
+      'Hello from Portfolio',
+      `Here is a password reset Link ${link}`
+    );
+    res
+      .status(201)
+      .json({ message: 'Password reset link is sent to your email', token });
   } catch (error) {
-    return next(error)
+    return next(error);
   }
-}
+};
 
 const resetPasswordSet = async (req, res, next) => {
-  const token = req.params.token
-  const { password } = req.body
+  const token = req.params.token;
+  const { password } = req.body;
   try {
-    const userId = jwt.verify(token, process.env.RESET_TOKEN_SECRET)
-    const user = await User.findOne({ _id: userId.id })
-    user.password = password
-    await user.save()
+    const userId = jwt.verify(token, process.env.RESET_TOKEN_SECRET);
+    const user = await User.findOne({ _id: userId.id });
+    user.password = password;
+    await user.save();
 
-    res.json({ message: "Password reseted" })
+    res.json({ message: 'Password reseted' });
   } catch (error) {
-    return next(error)
+    return next(error);
   }
-}
+};
 
 module.exports = {
   loginController,
@@ -226,5 +234,5 @@ module.exports = {
   updateUserController,
   deleteUserController,
   resetPasswordPOST,
-  resetPasswordSet
+  resetPasswordSet,
 };
