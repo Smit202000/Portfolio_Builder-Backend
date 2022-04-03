@@ -1,3 +1,4 @@
+const { string } = require('joi');
 const { model, Schema } = require('mongoose');
 
 const portfolioSchema = new Schema({
@@ -36,6 +37,10 @@ const portfolioSchema = new Schema({
   },
   address: {
     type: Object,
+  },
+  template: {
+    type: string,
+    required: true,
   },
   // testimonials: {
   //   type: String
