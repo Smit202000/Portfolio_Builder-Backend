@@ -5,7 +5,7 @@ const validation = joi.object({
   firstName: joi.string().min(3).max(20).trim(true).required(),
   lastName: joi.string().trim(true).required(),
   userName: joi.string().min(3).max(20).trim(true).required(),
-  email: joi.string().email().min(3).max(20).trim(true).required(),
+  email: joi.string().email().min(3).max(50).trim(true).required(),
   password: joi.string().trim(true).required(),
   haveOptedInForPortfolio: joi.boolean(),
 });

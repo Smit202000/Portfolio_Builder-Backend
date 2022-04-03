@@ -102,16 +102,27 @@ const refreshAccessToken = async (req, res, next) => {
 };
 
 const signUpController = async (req, res, next) => {
-  console.log(req.body);
-  //Creating Model instance from the request body
-  let user = new User(req.body);
+  const userData = await User.findOne();
+  if (req.body.email === userData.email) {
+    return res.status(500).json({
+      success: false,
+      message: 'Email id already exists.',
+    });
+  }
+  if (req.body.userName === userData.userName) {
+    return res.status(500).json({
+      success: false,
+      message: 'Username already exists.',
+    });
+  }
   try {
-    user = await user.save();
+    const user = new User(req.body);
+    const result = await user.save();
     // const { username, email, _id } = user;
 
     res.status(200).json({
       success,
-      data: user,
+      data: result,
     });
   } catch (error) {
     next(error);
