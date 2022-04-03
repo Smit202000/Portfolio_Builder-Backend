@@ -23,7 +23,7 @@ const createPortfolio = async (req, res) => {
   });
   try {
     await portfolio.save();
-    res.status(201).json({
+    res.status(200).json({
       success,
       data: portfolio,
     });
