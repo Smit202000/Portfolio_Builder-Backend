@@ -11,6 +11,6 @@ const auth = require('../middlewares/auth');
 
 const router = express.Router();
 router.post('/upload-resume', resumeUploadMiddleware, auth, fileUpload);
-router.post('/upload-image', imageUploadMiddleware, auth, fileUpload);
+router.post('/upload-image', imageUploadMiddleware, fileUpload);
 router.get('/fetch-resume-data', fetchData);
 module.exports = router;
