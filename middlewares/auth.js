@@ -8,6 +8,7 @@ const auth = async (req, res, next) => {
   //getting the token from the Authorization Header
   if (authorization && authorization.startsWith('Bearer')) {
     let token = authorization.split(' ')[1];
+    console.log(token, 'token');
     try {
       //decoding the token
       let payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
