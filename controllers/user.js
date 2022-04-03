@@ -2,12 +2,14 @@ const jwt = require("jsonwebtoken")
 require("dotenv").config()
 const MyErrors = require("../utils/customError.js")
 const User = require("../models/user.js")
+const mail = require("../utils/mail")
 
 const loginController = async (req, res, next) => {
     let { email, password } = req.body
     if (email && password) {
         //Finding User
-        let user = await User.findOne({ email })
+        let user = await User.findOne({email})
+        console.log(user);
         if (!user) {
             return next(MyErrors.notFound({ message: "User Not Found" }))
         }
@@ -96,7 +98,9 @@ const signUpController = async (req, res, next) => {
             email,
             _id
         } = user
-
+        const token = jwt.sign(_id, process.env.VERIFY_TOKEN_SECRET)
+        const link = "http://" + req.get('host') + "/user/verify-email/" + token;
+        await mail(email, link)
         res.status(201).json({
             username,
             email,
@@ -107,8 +111,43 @@ const signUpController = async (req, res, next) => {
     }
 }
 
+const resetPasswordPOST = async (req, res, next) => {
+    const { email } = req.body
+    try {
+        const u = await User.findOne({ email })
+        if (!u) {
+            next(MyErrors.notFound({
+                message: "User not found"
+            }))
+        }
+        console.log(u._id)
+        const token = jwt.sign({ id: u._id }, process.env.RESET_TOKEN_SECRET, {
+            // This time is in second
+            expiresIn: 60*60,
+          })
+        const link = "http://" + req.get('host') + "/user/password/reset/" + token;
+        await mail(email, link)
+        res.status(201).json({ message: "Password reset link is sent to your email", token })
+    } catch (error) {
+        return next(error)
+    }
+}
 
+const resetPasswordSet = async (req, res, next) => {
+    const token = req.params.token
+    const { password } = req.body
+    try {
+        const userId = jwt.verify(token, process.env.RESET_TOKEN_SECRET)
+        const user = await User.findOne({ _id: userId.id })
+        console.log(user);
+        user.password = password
+        await user.save()
 
+        res.json({ message: "Password reseted" })
+    } catch (error) {
+        return next(error)
+    }
+}
 
 const updateController = async (req, res, next) => {
 
@@ -123,7 +162,7 @@ const updateController = async (req, res, next) => {
         if (!updatedUser) {
             return res.status(404).json({
                 success: false,
-                message:"User not found"
+                message: "User not found"
             })
         }
         res.json({
@@ -133,7 +172,7 @@ const updateController = async (req, res, next) => {
     } catch (error) {
         next(error)
     }
-} 
+}
 
 
 const removeController = async (req, res) => {
@@ -146,9 +185,26 @@ const removeController = async (req, res) => {
     }
 };
 
+const verifyEmail = async (req, res, next) => {
+    const token = req.params.token
+    try {
+        const userId = jwt.verify(token, process.env.VERIFY_TOKEN_SECRET)
+        const user = await User.findOne({ _id: userId })
+        user.is_active = true
+        await user.save()
+        res.json({ message: "Account Activated" })
+    } catch (error) {
+        return next(MyErrors.invalid("Invalid Activation Token"))
+    }
+}
+
+
 module.exports = {
     loginController, logoutController, refreshAccessToken,
     signUpController,
     updateController,
     removeController,
+    resetPasswordPOST,
+    verifyEmail,
+    resetPasswordSet
 }

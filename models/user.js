@@ -3,15 +3,15 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 
 const userSchema = new mongoose.Schema({
-  first_name: {
+  firstName: {
     type: String,
     required: true,
   },
-  last_name: {
+  lastName: {
     type: String,
     required: true,
   },
-  user_name: {
+  userName: {
     type: String,
     required: true,
     unique: true,
@@ -30,7 +30,11 @@ const userSchema = new mongoose.Schema({
   blackList : {
     type: [String]
   },
-  have_opted_in_for_portfolio: {
+  haveOptedInForPortfolio: {
+    type: Boolean,
+    default: false
+  },
+  is_active:{
     type: Boolean,
     default: false
   }
@@ -50,7 +54,21 @@ userSchema.methods.checkPassword = async function (password) {
   return isMatched
 }
 
+userSchema.methods.getToken = function ({ exp, secret }) {
+  let token;
 
+  if (exp) {
+    token = jwt.sign({ id: this._id }, secret, {
+      // This time is in second
+
+      expiresIn: exp,
+    });
+  } else {
+    token = jwt.sign({ id: this._id }, secret);
+  }
+
+  return token;
+};
 //This method will execute before the user is saved
 userSchema.pre("save", async function (next) {
   //If Password is modified then only we need to rehash it
