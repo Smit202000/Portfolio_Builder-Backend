@@ -3,16 +3,28 @@ const mongoose = require('mongoose');
 const bodyparser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');
+var compression = require('compression');
+
 const fetchResumeDataRouter = require('./routes/fetchResumeData.routes');
 const { cloudinaryConfig } = require('./config/cloudinaryConfig');
 const userRouter = require('./routes/user.routes');
 const portfolioRouter = require('./routes/portfolioForm.routes');
 const { errorHandler } = require('./middlewares/errorHandler');
+const { default: helmet } = require('helmet');
 dotenv.config();
 const app = express();
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      'https://portfoliobuilder-prod.netlify.app',
+      'https://portfolio-builder-dev.netlify.app',
+    ],
+  })
+);
+app.use(compression());
+app.use(helmet());
 cloudinaryConfig();
 app.use(fetchResumeDataRouter);
 app.use('/user', userRouter);
