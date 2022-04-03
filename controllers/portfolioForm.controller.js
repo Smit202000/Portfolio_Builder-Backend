@@ -23,7 +23,7 @@ const createPortfolio = async (req, res) => {
   }
 };
 
-const getPortfolioByUsername = async (req, res) => {
+const getPortfolio = async (req, res) => {
   try {
     const portfolio = await portfolioModel.findOne({ user: req.user._id });
     const { firstName, lastName, userName, email } = await userModel.findOne({
@@ -49,6 +49,64 @@ const getPortfolioByUsername = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       error,
+      success: false,
+    });
+  }
+};
+
+const getPortfolioByUsername = async (req, res) => {
+  const username = req.params.username;
+  try {
+    // const userPortfolioData = await portfolioModel.findOne().populate('user');
+    // // console.log(data);
+    // if (userPortfolioData) {
+    //   res.status(200).json({
+    //     message: 'Portfolio fetched successfully!',
+    //     success: true,
+    //     data: userPortfolioData,
+    //   });
+    // } else {
+    //   res.status(404).json({
+    //     message: 'Could not find portfolio for given username!',
+    //     success: false,
+    //   });
+    // }
+    const userData = await userModel.findOne({ userName: username });
+    // console.log(userData);
+    // const portfolio = await portfolioModel.findOne({ user: username });
+    // if (portfolio)
+    //   return res.status(200).json({
+    //     success,
+    //     data: {
+    //       portfolio,
+    //     },
+    //   });
+    if (!userData) {
+      return res.status(404).json({
+        message: 'Could not find user for the given username',
+        success: false,
+      });
+    }
+    const portfolioData = await portfolioModel.findOne({ user: userData._id });
+    // console.log(portfolioData);
+    if (portfolioData) {
+      res.status(200).json({
+        message: 'Portfolio fetched successfully!',
+        success: true,
+        data: {
+          portfolioData,
+          userData,
+        },
+      });
+    } else {
+      res.status(404).json({
+        message: 'Could not find portfolio for given username!',
+        success: false,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      error: err,
       success: false,
     });
   }
@@ -106,5 +164,6 @@ module.exports = {
   createPortfolio,
   updatePortfolio,
   deletePortfolio,
+  getPortfolio,
   getPortfolioByUsername,
 };
