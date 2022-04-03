@@ -56,21 +56,24 @@ const updatePortfolio = async (req, res, next) => {
 
     try {
         const user = req.user
-        const updatedPortfolio = await portfolioModel.updateOne({
+        
+        portfolioModel.updateOne({
             user: user._id
         }, {
             $set: req.body
-        });
-        console.log(updatePortfolio);
-        if(!updatedPortfolio){
-            return res.status(404).json({
-                success: false,
-                message:"Portfolio not found"
-            })
-        }
-        res.json({
-            data: updatedPortfolio,
-            success
+        }, { new: true }, (error, data) => {
+            if (error) console.log(error)
+            if(!data){
+                return res.status(404).json({
+                    success: false,
+                    message:"Portfolio not found"
+                })
+            }
+            console.log(data);
+            res.json({
+                data,
+                success
+            });
         });
     } catch (error) {
         next(error)
